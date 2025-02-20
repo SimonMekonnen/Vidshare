@@ -20,11 +20,19 @@ class AuthRepositoryImpl implements AuthRepository {
   });
 
   @override
-  Future<Either<Failure, AuthTokens>> login(String email, String password) async {
+  Future<Either<Failure, AuthTokens>> login(
+    String username,
+    String password,
+  ) async {
+    // print(
+    //   'AuthRepositoryImpl: login, ----------------------------------------------------------------------------------------',
+    // );
     if (await networkInfo.isConnected) {
       try {
-        final tokens = await remoteDataSource.login(email, password);
+        final tokens = await remoteDataSource.login(username, password);
+      
         await localDataSource.cacheAuthTokens(tokens);
+    
         return Right(tokens);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -38,7 +46,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, User>> register(
-      String email, String password, String username) async {
+    String email,
+    String password,
+    String username,
+  ) async {
     if (await networkInfo.isConnected) {
       try {
         final user = await remoteDataSource.register(email, password, username);

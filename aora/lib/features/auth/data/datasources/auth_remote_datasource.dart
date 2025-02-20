@@ -5,7 +5,7 @@ import '../models/auth_tokens_model.dart';
 import '../models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<AuthTokensModel> login(String email, String password);
+  Future<AuthTokensModel> login(String username, String password);
   Future<UserModel> register(String email, String password, String username);
   Future<void> logout();
 }
@@ -14,22 +14,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final http.Client client;
   final String baseUrl;
 
-  AuthRemoteDataSourceImpl({
-    required this.client,
-    required this.baseUrl,
-  });
+  AuthRemoteDataSourceImpl({required this.client, required this.baseUrl});
 
   @override
-  Future<AuthTokensModel> login(String email, String password) async {
+  Future<AuthTokensModel> login(String username, String password) async {
     try {
       final response = await client.post(
-        Uri.parse('$baseUrl/auth/token'),
-        body: json.encode({
-          'email': email,
-          'password': password,
-        }),
+        Uri.parse('$baseUrl/auth/token/'),
+        body: json.encode({'username': username, 'password': password}),
         headers: {'Content-Type': 'application/json'},
       );
+  
 
       if (response.statusCode == 200) {
         return AuthTokensModel.fromJson(json.decode(response.body));
@@ -48,7 +43,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<UserModel> register(String email, String password, String username) async {
+  Future<UserModel> register(
+    String email,
+    String password,
+    String username,
+  ) async {
     try {
       final response = await client.post(
         Uri.parse('$baseUrl/auth/signup'),
