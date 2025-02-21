@@ -24,7 +24,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         body: json.encode({'username': username, 'password': password}),
         headers: {'Content-Type': 'application/json'},
       );
-  
 
       if (response.statusCode == 200) {
         return AuthTokensModel.fromJson(json.decode(response.body));
@@ -50,7 +49,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   ) async {
     try {
       final response = await client.post(
-        Uri.parse('$baseUrl/auth/signup'),
+        Uri.parse('$baseUrl/auth/signup/'),
         body: json.encode({
           'email': email,
           'password': password,
@@ -64,7 +63,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       } else {
         final errorBody = json.decode(response.body);
         throw ServerException(
-          message: errorBody['message'] ?? 'Failed to register',
+          message:
+              errorBody['message'] ??
+              errorBody['username'][0] ??
+              'Failed to register',
         );
       }
     } catch (e) {

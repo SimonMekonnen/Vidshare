@@ -4,8 +4,8 @@ import 'package:aora/features/auth/presentation/bloc/auth_state/auth_state_bloc.
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/error/failures.dart';
-import '../../domain/usecases/login_usecase.dart';
+import '../../../../../core/error/failures.dart';
+import '../../../domain/usecases/login_usecase.dart';
 
 part 'login_state.dart';
 part 'login_event.dart';

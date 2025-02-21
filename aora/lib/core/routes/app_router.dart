@@ -1,3 +1,4 @@
+import 'package:aora/features/auth/presentation/screens/signup_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,32 +17,21 @@ class AppRouter {
     debugLogDiagnostics: true,
     refreshListenable: GoRouterRefreshStream(authStateBloc.stream),
     routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const HomePage(),
-      ),
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginPage(),
-      ),
-      // GoRoute(
-      //   path: '/register',
-      //   builder: (context, state) => const RegisterPage(),
-      // ),
+      GoRoute(path: '/', builder: (context, state) => const HomePage()),
+      GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+      GoRoute(path: '/signup', builder: (context, state) => const SignupPage()),
     ],
     redirect: (BuildContext context, GoRouterState state) {
-
       final isAuthenticated = authStateBloc.state is Authenticated;
-      final isLoginRoute = state.matchedLocation == '/login';
+      final isAuthRoutes =
+          state.matchedLocation == '/login' ||
+          state.matchedLocation == '/signup';
 
-
-      if (!isAuthenticated && !isLoginRoute) {
-   
+      if (!isAuthenticated && !isAuthRoutes) {
         return '/login';
       }
 
-      if (isAuthenticated && isLoginRoute) {
-
+      if (isAuthenticated && isAuthRoutes) {
         return '/';
       }
 

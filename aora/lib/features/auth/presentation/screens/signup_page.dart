@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../bloc/login/login_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+import '../bloc/signup/signup_bloc.dart';
+
+class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignupPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
@@ -21,15 +23,25 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginBloc, LoginState>(
+    return BlocListener<SignupBloc, SignupState>(
       listener: (context, state) {
-        if (state is LoginSuccess) {}
-        if (state is LoginFailure) {
+        if (state is SignupSuccess) {
+          context.push('/login');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Account Created Successfully"),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+
+        if (state is SignupFailure) {
           // Show error message
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -58,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: 40),
                   Text(
-                    'Sign in',
+                    'Sign up',
                     style: TextStyle(
                       fontFamily: "Poppins",
                       fontSize: 22,
@@ -106,6 +118,66 @@ class _LoginPageState extends State<LoginPage> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your username';
                             }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 24),
+                        Text(
+                          'Email',
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 16,
+                            color: Colors.white70,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        TextFormField(
+                          keyboardType: TextInputType.emailAddress,
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Theme.of(context).colorScheme.surface,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            hintText: 'Enter your username',
+                            hintStyle: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Poppins',
+
+                              color: Theme.of(context).colorScheme.tertiary,
+                            ),
+                          ),
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email';
+                            }
+
+                            // Check for @ symbol
+                            if (!value.contains('@')) {
+                              return 'Email must contain @';
+                            }
+
+                            // Check for domain (period after @)
+                            final parts = value.split('@');
+                            if (parts.length != 2 || !parts[1].contains('.')) {
+                              return 'Please enter a valid email domain';
+                            }
+
+                            // Check against regex pattern for complete validation
+                            final emailRegex = RegExp(
+                              r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                            );
+                            if (!emailRegex.hasMatch(value.trim())) {
+                              return 'Please enter a valid email address';
+                            }
+
                             return null;
                           },
                         ),
@@ -165,16 +237,18 @@ class _LoginPageState extends State<LoginPage> {
                           },
                         ),
                         SizedBox(height: 32),
-                        BlocBuilder<LoginBloc, LoginState>(
+
+                        BlocBuilder<SignupBloc, SignupState>(
                           builder: (context, state) {
                             return ElevatedButton(
                               onPressed:
-                                  state is LoginLoading
+                                  state is SignupLoading
                                       ? null
                                       : () {
                                         if (_formKey.currentState!.validate()) {
-                                          context.read<LoginBloc>().add(
-                                            Login(
+                                          context.read<SignupBloc>().add(
+                                            Signup(
+                                              email: _emailController.text,
                                               username:
                                                   _usernameController.text,
                                               password:
@@ -183,6 +257,7 @@ class _LoginPageState extends State<LoginPage> {
                                           );
                                         }
                                       },
+
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
                                     Theme.of(context).colorScheme.primary,
@@ -192,7 +267,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               child:
-                                  state is LoginLoading
+                                  state is SignupLoading
                                       ? SizedBox(
                                         height: 20,
                                         width: 20,
@@ -201,7 +276,7 @@ class _LoginPageState extends State<LoginPage> {
                                         ),
                                       )
                                       : Text(
-                                        'Log in',
+                                        'Sign up',
                                         style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16,
@@ -211,33 +286,6 @@ class _LoginPageState extends State<LoginPage> {
                                       ),
                             );
                           },
-                        ),
-
-                        SizedBox(height: 24),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Don't have an account? ",
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: Colors.white70,
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                context.go('/signup');
-                              },
-                              child: Text(
-                                'Signup',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                       ],
                     ),

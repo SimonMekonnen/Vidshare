@@ -4,7 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import './injections/injection_container.dart' as di;
 import 'features/auth/presentation/bloc/auth_state/auth_state_bloc.dart';
 import 'core/routes/app_router.dart';
-import 'features/auth/presentation/bloc/login_bloc.dart';
+import 'features/auth/presentation/bloc/login/login_bloc.dart';
+import 'features/auth/presentation/bloc/signup/signup_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
           value: authBloc..add(CheckAuthStatus()),
         ),
         BlocProvider<LoginBloc>(create: (_) => di.sl<LoginBloc>()),
+        BlocProvider<SignupBloc>(create: (_) => di.sl<SignupBloc>()),
       ],
       child: MaterialApp.router(
         key: ValueKey(authBloc.state),
