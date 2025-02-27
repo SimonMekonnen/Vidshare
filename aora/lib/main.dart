@@ -1,4 +1,5 @@
 import 'package:aora/core/theme/app_theme.dart';
+import 'package:aora/features/video_hub/presentation/bloc/video_gallery/video_gallery_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import './injections/injection_container.dart' as di;
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<LoginBloc>(create: (_) => di.sl<LoginBloc>()),
         BlocProvider<SignupBloc>(create: (_) => di.sl<SignupBloc>()),
+        BlocProvider<VideoGalleryBloc>(create: (_) => di.sl<VideoGalleryBloc>()),
       ],
       child: MaterialApp.router(
         key: ValueKey(authBloc.state),

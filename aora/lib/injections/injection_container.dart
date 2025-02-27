@@ -8,6 +8,7 @@ import '../core/network/network_info.dart';
 import '../core/routes/app_router.dart';
 import '../core/services/auth_manager.dart';
 import 'auth_injection.dart';
+import 'video_hub_injection.dart';
 
 final sl = GetIt.instance;
 
@@ -24,6 +25,7 @@ Future<void> init() async {
   sl.registerFactory<NetworkInfo>(() => NetworkInfoImpl(sl()));
 
   authInit();
+  videoHubInit();
 
   sl.registerLazySingleton(() => AppRouter(sl()));
 }

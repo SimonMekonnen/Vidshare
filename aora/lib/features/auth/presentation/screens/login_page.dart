@@ -226,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             TextButton(
                               onPressed: () {
-                                context.go('/signup');
+                                context.push('/signup');
                               },
                               child: Text(
                                 'Signup',

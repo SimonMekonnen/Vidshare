@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/bloc/auth_state/auth_state_bloc.dart';
 import '../../features/auth/presentation/screens/login_page.dart';
 
-import '../../features/home/presentation/screens/home_page.dart';
+import '../../features/video_hub/presentation/screens/home_page.dart';
 import 'go_router_refresh_stream.dart';
 
 class AppRouter {
